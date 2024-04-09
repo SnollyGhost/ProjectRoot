@@ -1,16 +1,12 @@
 import React, { useRef, useEffect } from "react";
 
-import "./Map.css";
-
-const Map = (props) => {
+const Map = ({ center, zoom, className }) => {
   const mapRef = useRef();
-
-  const { center, zoom } = props;
 
   useEffect(() => {
     if (window.ol) {
       new window.ol.Map({
-        target: mapRef.current.id,
+        target: mapRef.current?.id,
         layers: [
           new window.ol.layer.Tile({
             source: new window.ol.source.OSM(),
@@ -18,22 +14,13 @@ const Map = (props) => {
         ],
         view: new window.ol.View({
           center: window.ol.proj.fromLonLat([center.lng, center.lat]),
-          zoom: zoom,
+          zoom,
         }),
       });
-    } else {
-      console.error("OpenLayers library is not loaded.");
     }
   }, [center, zoom]);
 
-  return (
-    <div
-      ref={mapRef}
-      className={`map ${props.className}`}
-      style={props.style}
-      id="map"
-    ></div>
-  );
+  return <div ref={mapRef} className={`map ${className} w-full h-1/2`} id="map"></div>;
 };
 
 export default Map;
