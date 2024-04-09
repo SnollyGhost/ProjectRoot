@@ -1,60 +1,38 @@
-import React from 'react';
-import {
-  ComposableMap,
-  Geographies,
-  Geography,
-  Marker,
-} from 'react-simple-maps';
-import { geoMercator } from 'd3-geo';
+import React, { useRef, useEffect } from "react";
 
-// Simplified world geography data
-const WORLD_GEOGRAPHY_DATA = {
-  type: 'FeatureCollection',
-  features: [
-    {
-      type: 'Feature',
-      properties: { name: 'Country1' },
-      geometry: {
-        type: 'Polygon',
-        coordinates: [[[0, 0], [0, 10], [10, 10], [10, 0], [0, 0]]],
-      },
-    },
-    {
-      type: 'Feature',
-      properties: { name: 'Country2' },
-      geometry: {
-        type: 'Polygon',
-        coordinates: [[[10, 0], [10, 10], [20, 10], [20, 0], [10, 0]]],
-      },
-    },
-  ],
-};
+import "./Map.css";
 
-const Map = ({ center }) => {
+const Map = (props) => {
+  const mapRef = useRef();
+
+  const { center, zoom } = props;
+
+  useEffect(() => {
+    if (window.ol) {
+      new window.ol.Map({
+        target: mapRef.current.id,
+        layers: [
+          new window.ol.layer.Tile({
+            source: new window.ol.source.OSM(),
+          }),
+        ],
+        view: new window.ol.View({
+          center: window.ol.proj.fromLonLat([center.lng, center.lat]),
+          zoom: zoom,
+        }),
+      });
+    } else {
+      console.error("OpenLayers library is not loaded.");
+    }
+  }, [center, zoom]);
+
   return (
-    <div className="w-full h-full">
-      <ComposableMap
-        projection={geoMercator}
-        projectionConfig={{
-          scale: 100,
-          center: center, // Use the center prop to center the map
-        }}
-      >
-        {/* Render the world map */}
-        <Geographies geography={WORLD_GEOGRAPHY_DATA}>
-          {({ geographies }) =>
-            geographies.map((geo) => (
-              <Geography key={geo.rsmKey} geography={geo} />
-            ))
-          }
-        </Geographies>
-
-        {/* Add a marker at the specified coordinates (Ethiopia) */}
-        <Marker coordinates={[40.4897, 9.1450]}>
-          <circle r={8} fill="#F00" />
-        </Marker>
-      </ComposableMap>
-    </div>
+    <div
+      ref={mapRef}
+      className={`map ${props.className}`}
+      style={props.style}
+      id="map"
+    ></div>
   );
 };
 
