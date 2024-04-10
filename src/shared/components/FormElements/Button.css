@@ -1,14 +1,16 @@
+/* Alternate Cool Button Style */
 .button {
   font: inherit;
   padding: 0.5rem 1.5rem;
-  border: 1px solid #ff0055;
+  border: 1px solid #007bff; /* Blue border */
   border-radius: 4px;
-  background: #ff0055;
-  color: white;
+  background: #007bff; /* Blue background */
+  color: black;
   cursor: pointer;
   margin-right: 1rem;
   text-decoration: none;
   display: inline-block;
+  transition: background-color 0.3s, border-color 0.3s; /* Smooth transition */
 }
 
 .button:focus {
@@ -17,38 +19,38 @@
 
 .button:hover,
 .button:active {
-  background: #ff4382;
-  border-color: #ff4382;
+  background: #0056b3; /* Darker blue on hover/active */
+  border-color: #0056b3;
 }
 
 .button--inverse {
   background: transparent;
-  color: #ff0055;
+  color: #007bff; /* Blue text */
 }
 
 .button--inverse:hover,
 .button--inverse:active {
   color: white;
-  background: #ff0055;
+  background: #007bff;
 }
 
 .button--danger {
-  background: #830000;
-  border-color: #830000;
+  background: #dc3545; /* Red background */
+  border-color: #dc3545;
 }
 
 .button--danger:hover,
 .button--danger:active {
-  background: #f34343;
-  border-color: #f34343;
+  background: #c82333; /* Darker red on hover/active */
+  border-color: #c82333;
 }
 
 .button:disabled,
 .button:hover:disabled,
 .button:active:disabled {
-  background: #ccc;
-  color: #979797;
-  border-color: #ccc;
+  background: #f8f9fa; /* Light gray background for disabled state */
+  color: #6c757d; /* Gray text for disabled state */
+  border-color: #f8f9fa;
   cursor: not-allowed;
 }
 
