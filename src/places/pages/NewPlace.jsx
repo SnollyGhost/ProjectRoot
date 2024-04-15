@@ -1,43 +1,14 @@
-import { useCallback, useReducer } from "react";
 import Input from "../../shared/components/FormElements/Input";
 import {
   VALIDATOR_MINLENGTH,
   VALIDATOR_REQUIRE,
 } from "../../shared/util/validators";
-
 import Button from "../../shared/components/FormElements/Button";
-
-const formReducer = (state, action) => {
-  switch (action.type) {
-    case "INPUT_CHANGE":
-      let formIsValid = true; 
-      for (const inputId in state.inputs) {
-        if (inputId === action.inputId) {
-          formIsValid = formIsValid && action.isValid;
-        } else {
-          formIsValid = formIsValid && state.inputs[inputId].isValid;
-        }
-      }
-      return {
-        ...state,
-        inputs: {
-          ...state.inputs,
-          [action.inputId]: {
-            ...state.inputs[action.inputId],
-            value: action.value,
-            isValid: action.isValid,
-          },
-        },
-        isValid: formIsValid,
-      };
-    default:
-      return state;
-  }
-};
+import { useForm } from "../../shared/hooks/form-hook";
 
 const NewPlace = () => {
-  const [formState, dispatch] = useReducer(formReducer, {
-    inputs: {
+  const [formState, inputHandler] = useForm(
+    {
       title: {
         value: "",
         isValid: false,
@@ -46,17 +17,13 @@ const NewPlace = () => {
         value: "",
         isValid: false,
       },
+      address: {
+        value: "",
+        isValid: false,
+      },
     },
-  });
-
-  const InputHandler = useCallback((id, value, isValid) => {
-    dispatch({
-      type: "INPUT_CHANGE",
-      value: value,
-      isValid: isValid,
-      inputId: id,
-    });
-  }, []);
+    false
+  );
 
   const placeSubmitHandler = (event) => {
     event.preventDefault();
@@ -72,7 +39,7 @@ const NewPlace = () => {
         label="Title"
         validators={[VALIDATOR_REQUIRE()]}
         errorText="please ente valid title"
-        onInput={InputHandler}
+        onInput={inputHandler}
         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
       />
       <Input
@@ -81,9 +48,9 @@ const NewPlace = () => {
         label="Description"
         validators={[VALIDATOR_MINLENGTH(5)]}
         errorText="please enter a valid description"
-        onInput={InputHandler}
+        onInput={inputHandler}
         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline resize-y" // Added 'resize-y' to enable vertical resizing
-        rows={2} 
+        rows={2}
       />
 
       <Input
@@ -92,7 +59,7 @@ const NewPlace = () => {
         label="Address"
         validators={[VALIDATOR_REQUIRE]}
         errorText="please ente valid address"
-        onInput={InputHandler}
+        onInput={inputHandler}
         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
       />
       <Button type="submit" disabled={!formState.isValid}>

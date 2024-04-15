@@ -1,4 +1,5 @@
 import PlaceItem from "./PlaceItem";
+import Button from "../../shared/components/FormElements/Button";
 
 const PlaceList = (props) => {
   return (
@@ -8,9 +9,12 @@ const PlaceList = (props) => {
           <h2 className="text-xl font-bold mb-2">
             No places found. Maybe create one?
           </h2>
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          <Button
+            to="/places/new"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
             Share Place
-          </button>
+          </Button>
         </div>
       ) : (
         <ul className="divide-y divide-gray-200">

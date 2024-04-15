@@ -4,9 +4,11 @@ const Map = ({ center, zoom, markerCoordinate, className }) => {
   const mapRef = useRef();
 
   useEffect(() => {
+    let map;
+
     if (window.ol) {
       // Create a new map instance
-      const map = new window.ol.Map({
+      map = new window.ol.Map({
         target: mapRef.current,
         layers: [
           new window.ol.layer.Tile({
@@ -56,6 +58,13 @@ const Map = ({ center, zoom, markerCoordinate, className }) => {
     } else {
       console.error("OpenLayers library is not loaded.");
     }
+
+    // Clean up function
+    return () => {
+      if (map) {
+        map.setTarget(null);
+      }
+    };
   }, [center, zoom, markerCoordinate]);
 
   return (
