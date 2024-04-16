@@ -1,15 +1,21 @@
-import React from "react";
+import React, { useState, useContext } from "react";
 import Card from "../../shared/components/UIElements/Card";
 import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
 import {
   VALIDATOR_EMAIL,
   VALIDATOR_MINLENGTH,
+  VALIDATOR_REQUIRE,
 } from "../../shared/util/validators";
 import { useForm } from "../../shared/hooks/form-hook";
+import { AuthContext } from "../../shared/context/auth-context";
 
 const Auth = () => {
-  const [formState, inputHandler] = useForm(
+  const auth = useContext(AuthContext);
+
+  const [isLoginMode, setIsLoginMode] = useState(true);
+
+  const [formState, inputHandler, setFormData] = useForm(
     {
       email: {
         value: "",
@@ -23,9 +29,33 @@ const Auth = () => {
     false
   );
 
+  const switchModeHandler = () => {
+    if (!isLoginMode) {
+      setFormData({
+        ...formState.inputs,
+        name: undefined,
+        isValid:
+          formState.inputs.email.isValid && formState.inputs.password.isValid,
+      });
+    } else {
+      setFormData(
+        {
+          ...formState.inputs,
+          name: {
+            value: "",
+            isValid: false,
+          },
+        },
+        false
+      );
+    }
+    setIsLoginMode((prevMode) => !prevMode);
+  };
+
   const authSubmitHandler = (event) => {
     event.preventDefault();
     console.log(formState.inputs);
+    auth.login();
   };
 
   return (
@@ -33,6 +63,17 @@ const Auth = () => {
       <h2 className="text-xl font-semibold mb-4">Login Required</h2>
       <hr className="my-4" />
       <form onSubmit={authSubmitHandler}>
+        {!isLoginMode && (
+          <Input
+            element="input"
+            id="name"
+            type="text"
+            label="Your Name"
+            validators={[VALIDATOR_REQUIRE]}
+            errorText="Please enter a Name"
+            onInput={inputHandler}
+          />
+        )}
         <Input
           element="input"
           id="email"
@@ -58,14 +99,12 @@ const Auth = () => {
           disabled={!formState.isValid}
           className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
         >
-          LOGIN
+          {isLoginMode ? "LOGIN" : "SIGNUP"}
         </Button>
       </form>
-      "
       <Button inverse onClick={switchModeHandler}>
-        SWITCH TO SIGN UP
+        SWITCH TO {isLoginMode ? "SIGNUP" : "LOGIN"}
       </Button>
-      "
     </Card>
   );
 };

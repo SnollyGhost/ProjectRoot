@@ -1,16 +1,31 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { NavLink } from "react-router-dom";
+import { AuthContext } from "../context/auth-context";
 
 const NavLinks = () => {
+  const auth = useContext(AuthContext);
+
   const [isOpen, setIsOpen] = useState(false);
 
+  const toggleDrawer = () => setIsOpen(!isOpen);
   const closeDrawer = () => setIsOpen(false);
+
+  const renderNavLink = (to, label) => (
+    <NavLink
+      to={to}
+      className={({ isActive }) =>
+        `text-white text-lg ${isActive ? "" : "hover:text-blue-700"}`
+      }
+    >
+      {label}
+    </NavLink>
+  );
 
   return (
     <div>
       <button
         className="md:hidden text-white text-3xl z-20"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={toggleDrawer}
       >
         ☰
       </button>
@@ -29,111 +44,33 @@ const NavLinks = () => {
           className="flex flex-col items-start p-4 space-y-4"
           onClick={(e) => e.stopPropagation()}
         >
-          <li>
-            <NavLink
-              to="/"
-              className={({ isActive }) =>
-                isActive
-                  ? "text-white text-lg"
-                  : "text-white hover:text-blue-700 text-lg"
-              }
-              onClick={closeDrawer}
+          {renderNavLink("/", "All Users")}
+          {auth.isLoggedIn && renderNavLink("/u1/places", "My Places")}
+          {auth.isLoggedIn && renderNavLink("/places/new", "Add Places")}
+          {!auth.isLoggedIn && renderNavLink("/auth", "Authenticate")}
+          {auth.isLoggedIn && (
+            <button
+              className="text-white text-lg hover:text-blue-700"
+              onClick={auth.logout}
             >
-              All Users
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to="/u1/places"
-              className={({ isActive }) =>
-                isActive
-                  ? "text-white text-lg"
-                  : "text-white hover:text-blue-700 text-lg"
-              }
-              onClick={closeDrawer}
-            >
-              My Places
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to="/places/new"
-              className={({ isActive }) =>
-                isActive
-                  ? "text-white text-lg"
-                  : "text-white hover:text-blue-700 text-lg"
-              }
-              onClick={closeDrawer}
-            >
-              Add Places
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to="/auth"
-              className={({ isActive }) =>
-                isActive
-                  ? "text-white text-lg"
-                  : "text-white hover:text-blue-700 text-lg"
-              }
-              onClick={closeDrawer}
-            >
-              Authenticate
-            </NavLink>
-          </li>
+              Logout
+            </button>
+          )}
         </ul>
       </div>
-      <ul
-        className={`hidden md:flex md:space-x-4 md:static bg-gray-700 w-full`}
-      >
-        <li>
-          <NavLink
-            to="/"
-            className={({ isActive }) =>
-              isActive
-                ? "text-white text-lg"
-                : "text-white hover:text-blue-700 text-lg"
-            }
+      <ul className="hidden md:flex md:space-x-4 md:static bg-gray-700 w-full">
+        {renderNavLink("/", "All Users")}
+        {auth.isLoggedIn && renderNavLink("/u1/places", "My Places")}
+        {auth.isLoggedIn && renderNavLink("/places/new", "Add Places")}
+        {!auth.isLoggedIn && renderNavLink("/auth", "Authenticate")}
+        {auth.isLoggedIn && (
+          <button
+            className="text-white text-lg hover:text-blue-700"
+            onClick={auth.logout}
           >
-            All Users
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/u1/places"
-            className={({ isActive }) =>
-              isActive
-                ? "text-white text-lg"
-                : "text-white hover:text-blue-700 text-lg"
-            }
-          >
-            My Places
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/places/new"
-            className={({ isActive }) =>
-              isActive
-                ? "text-white text-lg"
-                : "text-white hover:text-blue-700 text-lg"
-            }
-          >
-            Add Places
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/auth"
-            className={({ isActive }) =>
-              isActive
-                ? "text-white text-lg"
-                : "text-white hover:text-blue-700 text-lg"
-            }
-          >
-            Authenticate
-          </NavLink>
-        </li>
+            Logout
+          </button>
+        )}
       </ul>
     </div>
   );
